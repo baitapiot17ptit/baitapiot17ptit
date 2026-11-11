@@ -1,0 +1,8 @@
+# Thông tin bí mật (WiFi, Write API Key) - chỉ commit secrets.example.h
+firmware/**/secrets.h
+
+# Build / IDE
+build/
+.vscode/
+*.bin
+*.elf

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trạm quan trắc Nhóm 17</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+  <!-- ?v=: tăng số mỗi lần sửa css/js để trình duyệt không dùng bản cache cũ -->
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">IoT & Ứng dụng · PTIT</p>
+        <h1>Trạm quan trắc vi khí hậu <span class="accent">Nhóm 17</span></h1>
+        <p class="hero-sub">ESP32 · AHT20 (nhiệt độ, độ ẩm) · LM393 (ánh sáng) → ThingSpeak, cập nhật mỗi 20 giây</p>
+      </div>
+      <div class="live" id="liveBadge">
+        <span class="pulse"></span>
+        <div>
+          <p class="live-state" id="liveState">Đang kết nối…</p>
+          <p class="live-time" id="liveTime">--</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="team panel">
+      <h2 class="panel-title">Thành viên nhóm</h2>
+      <ol class="member-list" id="memberList"></ol>
+    </section>
+
+    <section class="gauges">
+      <article class="panel gauge-card">
+        <h2 class="panel-title">Nhiệt độ</h2>
+        <div class="ring-box">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-track" cx="60" cy="60" r="50"></circle>
+            <circle class="ring-value ring-temp" id="tempRing" cx="60" cy="60" r="50"></circle>
+          </svg>
+          <p class="ring-label"><span id="tempValue">--</span><small>°C</small></p>
+        </div>
+        <p class="gauge-note" id="tempNote">Thang 0–50 °C</p>
+      </article>
+      <article class="panel gauge-card">
+        <h2 class="panel-title">Độ ẩm</h2>
+        <div class="ring-box">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-track" cx="60" cy="60" r="50"></circle>
+            <circle class="ring-value ring-hum" id="humRing" cx="60" cy="60" r="50"></circle>
+          </svg>
+          <p class="ring-label"><span id="humValue">--</span><small>%</small></p>
+        </div>
+        <p class="gauge-note" id="humNote">Thang 0–100 %</p>
+      </article>
+      <article class="panel gauge-card light-card">
+        <h2 class="panel-title">Ánh sáng</h2>
+        <p class="big-number" id="lightValue">--</p>
+        <div class="bar" aria-hidden="true"><div class="bar-fill" id="lightBar"></div></div>
+        <p class="gauge-note"><span id="lightLevel">--</span> · thang ADC 0–4095</p>
+      </article>
+      <article class="panel derived">
+        <h2 class="panel-title">Chỉ số tính toán</h2>
+        <dl>
+          <div><dt>Nhiệt độ cảm nhận</dt><dd><span id="heatIndex">--</span> °C</dd></div>
+          <div><dt>Điểm sương</dt><dd><span id="dewPoint">--</span> °C</dd></div>
+          <div><dt>Mức thoải mái</dt><dd id="comfort">--</dd></div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="panel stats">
+      <h2 class="panel-title">Thống kê 24 giờ</h2>
+      <table class="stats-table">
+        <thead><tr><th>Đại lượng</th><th>Thấp nhất</th><th>Trung bình</th><th>Cao nhất</th></tr></thead>
+        <tbody id="statsBody"></tbody>
+      </table>
+      <p class="muted" id="statsNote"></p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Diễn biến theo thời gian</h2>
+        <div class="segmented" id="rangeTabs" role="tablist">
+          <button type="button" data-range="1h" class="active">1 giờ</button>
+          <button type="button" data-range="24h">24 giờ</button>
+          <button type="button" data-range="7d">7 ngày</button>
+        </div>
+      </div>
+      <div class="chart-wrap tall"><canvas id="climateChart"></canvas></div>
+      <div class="chart-wrap"><canvas id="lightChart"></canvas></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">10 bản ghi gần nhất</h2>
+      <div class="table-scroll">
+        <table class="log-table">
+          <thead><tr><th>Thời gian</th><th>#</th><th>Nhiệt độ (°C)</th><th>Độ ẩm (%)</th><th>Ánh sáng</th></tr></thead>
+          <tbody id="logBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">Biểu đồ trên ThingSpeak</h2>
+      <p class="muted">Nhúng trực tiếp từ kênh ThingSpeak: field chart và các MATLAB Visualization phân tích dữ liệu.</p>
+      <div class="embed-grid" id="embedGrid"></div>
+    </section>
+
+    <footer class="footer">
+      Dữ liệu: <a id="channelLink" target="_blank" rel="noopener">ThingSpeak channel</a>
+      · Trang chỉ hiển thị, tự làm mới mỗi 20 giây
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="config.js?v=1"></script>
+  <script src="app.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,463 @@
+:root {
+  --bg: #0b1220;
+  --bg-glow: #0f2a33;
+  --panel: rgba(18, 28, 46, 0.86);
+  --panel-border: rgba(94, 234, 212, 0.14);
+  --text: #e6f1f5;
+  --muted: #8ba3b4;
+  --accent: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.16);
+  --temp: #fb7185;
+  --hum: #60a5fa;
+  --light: #fbbf24;
+  --ok: #34d399;
+  --warn: #f87171;
+  --track: rgba(148, 163, 184, 0.18);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, var(--bg-glow), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, #1e1b4b, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  line-height: 1.55;
+}
+
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 16px 40px;
+  display: grid;
+  gap: 18px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 8px 4px 6px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  line-height: 1.2;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.hero-sub {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.live {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: var(--panel);
+}
+
+.pulse {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.live.online .pulse {
+  background: var(--ok);
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  animation: pulse 1.8s infinite;
+}
+
+.live.offline .pulse {
+  background: var(--warn);
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 10px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+.live-state {
+  margin: 0;
+  font-weight: 600;
+}
+
+.live-time {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ---------- Panel ---------- */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  backdrop-filter: blur(6px);
+}
+
+.panel-title {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ---------- Thành viên ---------- */
+.member-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  counter-reset: member;
+}
+
+.member-list li {
+  counter-increment: member;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  border: 1px solid var(--panel-border);
+}
+
+.member-list li::before {
+  content: counter(member, decimal-leading-zero);
+  display: block;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+}
+
+.member-name {
+  display: block;
+  font-weight: 600;
+}
+
+.member-id {
+  font-family: "JetBrains Mono", monospace;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ---------- Gauge ---------- */
+.gauges {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.gauge-card {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.gauge-card .panel-title {
+  justify-self: start;
+}
+
+.ring-box {
+  position: relative;
+  width: 170px;
+  height: 170px;
+}
+
+.ring {
+  width: 170px;
+  height: 170px;
+  transform: rotate(-90deg);
+}
+
+.ring-track,
+.ring-value {
+  fill: none;
+  stroke-width: 10;
+}
+
+.ring-track {
+  stroke: var(--track);
+}
+
+.ring-value {
+  stroke-linecap: round;
+  stroke-dasharray: 314.16;
+  stroke-dashoffset: 314.16;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.ring-temp {
+  stroke: var(--temp);
+}
+
+.ring-hum {
+  stroke: var(--hum);
+}
+
+.ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.ring-label small {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.gauge-note {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.light-card {
+  align-content: start;
+}
+
+.big-number {
+  margin: 18px 0 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--light);
+}
+
+.bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.bar-fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #78350f, var(--light));
+  transition: width 0.8s ease;
+}
+
+.derived dl {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.derived dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.derived dd {
+  margin: 2px 0 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+/* ---------- Bảng ---------- */
+.stats-table,
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-table th,
+.stats-table td,
+.log-table th,
+.log-table td {
+  padding: 10px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--track);
+}
+
+.stats-table th:first-child,
+.stats-table td:first-child,
+.log-table th:first-child,
+.log-table td:first-child {
+  text-align: left;
+}
+
+.stats-table th,
+.log-table th {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats-table td,
+.log-table td {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.stats-table td:first-child {
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.stats .muted {
+  margin-top: 10px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+/* ---------- Biểu đồ ---------- */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--track);
+}
+
+.segmented button {
+  border: 0;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--accent);
+  color: #042f2e;
+  font-weight: 600;
+}
+
+.chart-wrap {
+  position: relative;
+  height: 220px;
+  margin-top: 14px;
+}
+
+.chart-wrap.tall {
+  height: 300px;
+}
+
+.embed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.embed {
+  margin: 0;
+}
+
+.embed figcaption {
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.embed iframe {
+  display: block;
+  width: 100%;
+  height: 290px;
+  border: 0;
+  border-radius: 12px;
+  /* Biểu đồ ThingSpeak luôn nền trắng */
+  background: #fff;
+}
+
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding-top: 6px;
+}
+
+.footer a {
+  color: var(--accent);
+}
+
+/* ---------- Màn hình nhỏ ---------- */
+@media (max-width: 960px) {
+  .gauges,
+  .member-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .gauges,
+  .member-list,
+  .embed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-table th,
+  .stats-table td,
+  .log-table th,
+  .log-table td {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+  }
+}
